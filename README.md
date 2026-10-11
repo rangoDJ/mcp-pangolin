@@ -216,6 +216,82 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 }
 ```
 
+### Google Antigravity
+
+Add to your global config (`~/.gemini/config/mcp_config.json`) or workspace (`.agents/mcp_config.json`):
+
+**Local execution:**
+```json
+{
+  "mcpServers": {
+    "pangolin": {
+      "command": "C:/path/to/mcp-pangolin.exe",
+      "args": [
+        "--openapi", "C:/path/to/pangolin-api.json",
+        "--base-url", "https://your-pangolin-instance.com/v1"
+      ],
+      "env": {
+        "PANGOLIN_API_KEY": "YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+**Remote execution via SSH Docker on VPS:**
+```json
+{
+  "mcpServers": {
+    "pangolin": {
+      "command": "ssh",
+      "args": [
+        "user@vps-ip",
+        "docker", "run", "-i", "--rm",
+        "-e", "PANGOLIN_API_KEY=YOUR_API_KEY",
+        "-e", "PANGOLIN_BASE_URL=https://your-pangolin-instance.com/v1",
+        "-v", "/opt/pangolin-api.json:/app/data/pangolin-api.json:ro",
+        "ghcr.io/rangodj/mcp-pangolin:latest"
+      ]
+    }
+  }
+}
+```
+
+---
+
+## Docker Setup
+
+### 1. Pre-built Image (GitHub Container Registry)
+
+You can run the image directly without compiling:
+
+```bash
+docker run -i --rm \
+  -e PANGOLIN_API_KEY="YOUR_API_KEY" \
+  -e PANGOLIN_BASE_URL="https://your-pangolin-instance.com/v1" \
+  -v "$(pwd)/pangolin-api.json:/app/data/pangolin-api.json:ro" \
+  ghcr.io/rangodj/mcp-pangolin:latest
+```
+
+### 2. Build from Source
+
+```bash
+docker build -t mcp-pangolin .
+```
+
+### 3. Docker Compose
+
+Copy `.env.example` to `.env` and fill in your Pangolin details:
+```bash
+cp .env.example .env
+```
+
+Ensure `pangolin-api.json` is located in the same directory, then launch:
+```bash
+docker compose up -d
+```
+
+
 ## Usage Examples
 
 Once configured, you can ask Claude questions like:

@@ -1,0 +1,18 @@
+services:
+  mcp-pangolin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/rangodj/mcp-pangolin:latest
+    container_name: mcp-pangolin
+    stdin_open: true
+    tty: true
+    environment:
+      - PANGOLIN_API_KEY=${PANGOLIN_API_KEY}
+      - PANGOLIN_BASE_URL=${PANGOLIN_BASE_URL}
+      - PANGOLIN_OPENAPI_FILE=/app/data/pangolin-api.json
+      # Optional: set to 'true' to restrict agent to read-only actions
+      - PANGOLIN_READ_ONLY=${PANGOLIN_READ_ONLY:-false}
+    volumes:
+      # Place your Pangolin OpenAPI JSON spec next to docker-compose.yml
+      - ./pangolin-api.json:/app/data/pangolin-api.json:ro
